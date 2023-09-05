@@ -224,10 +224,11 @@ class Auth extends CI_Controller
 
             $query = $this->admin->insert('user', $input);
             $input_token = $this->admin->insert('user_token', $user_token);
+            $userdata = $this->session->set_userdata('register_session', $user_token);
             if ($query && $input_token) 
             {
                 $this->_sendEmail($otp_code, 'verify');
-                $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Selamat! Akun berhasil dibuat. Silahkan aktifkan akun anda!</div>');
+                $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Selamat! Akun berhasil dibuat. Silahkan aktifkan akun anda menggunakan OTP yang sudah kami kirim ke email anda!</div>');
                 redirect('auth/verify');
             } 
             else 
@@ -276,10 +277,10 @@ class Auth extends CI_Controller
 
     public function verify()
     {
-
-        $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[user.email]', [
-            'is_unique' => 'Email ini sudah pernah terdaftar, silahkan ganti dengan email lain!'
-        ]);
+        $this->form_validation->set_rules('otp_1', 'OTP', 'required|trim');
+        $this->form_validation->set_rules('otp_2', 'OTP', 'required|trim');
+        $this->form_validation->set_rules('otp_3', 'OTP', 'required|trim');
+        $this->form_validation->set_rules('otp_4', 'OTP', 'required|trim');
 
         if ($this->form_validation->run() == false) 
         {
@@ -287,42 +288,41 @@ class Auth extends CI_Controller
             $this->template->load('templates/otp', 'auth/otp', $data);
         } else 
         {
+            $otp_1 = $this->input->post('otp_1');
+            $otp_2 = $this->input->post('otp_2');
+            $otp_3 = $this->input->post('otp_3');
+            $otp_4 = $this->input->post('otp_4');
+
+            $entered_otp = $otp_1 . $otp_2 . $otp_3 . $otp_4;
+            $data = $this->session->userdata('register_session');
+            $this->db->select('token');
+            $this->db->where('email', $data['email']);
+            $query = $this->db->get('user_token');
             
+            if ($query->num_rows() > 0) {
+                $row = $query->row();
+                $valid_otp = $row->token; // Kode OTP yang tersimpan di database
+                $user_token = $this->db->get_where('user_token', ['token' => $data['token']])->row_array();
+                if ($entered_otp === $valid_otp) {
+                    if (time() - $user_token['date_created'] < (60 * 10)) {
+                    $this->db->set('is_active', 1);
+                    $this->db->where('email', $data['email']);
+                    $this->db->update('user');
+                    $this->db->delete('user_token', ['email' => $data['email']]);
+                    $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">' . $data['email'] . ' has been activated! Please login.</div>');
+                    redirect('auth');
+                } else 
+                {
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Account activation failed! Wrong OTP.</div>');
+                    redirect('auth/verify');
+                }
+            } else 
+            {
+                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Cant match the OTP code.</div>');
+                redirect('auth/verify');
+            }
+            }
         }
-
-        // $email = $this->input->get('email');
-        // $token = $this->input->get('token');
-
-        // $user = $this->db->get_where('user', ['email' => $email])->row_array();
-
-        // if ($user) {
-        //     $user_token = $this->db->get_where('user_token', ['token' => $token])->row_array();
-
-        //     if ($user_token) {
-        //         if (time() - $user_token['date_created'] < (60 * 60 * 24)) {
-        //             $this->db->set('is_active', 1);
-        //             $this->db->where('email', $email);
-        //             $this->db->update('user');
-
-        //             $this->db->delete('user_token', ['email' => $email]);
-
-        //             $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">' . $email . ' has been activated! Please login.</div>');
-        //             redirect('auth');
-        //         } else {
-        //             $this->db->delete('user', ['email' => $email]);
-        //             $this->db->delete('user_token', ['email' => $email]);
-
-        //             $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Account activation failed! Token expired.</div>');
-        //             redirect('auth');
-        //         }
-        //     } else {
-        //         $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Account activation failed! Wrong token.</div>');
-        //         redirect('auth');
-        //     }
-        // } else {
-        //     $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Account activation failed! Wrong email.</div>');
-        //     redirect('auth');
-        // }
     }
 
     public function forgotPassword()
