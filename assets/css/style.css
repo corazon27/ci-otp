@@ -1,0 +1,72 @@
+    .container {
+        margin-top: 20px;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .card-header h4 {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        font-weight: bold;
+        background-color: #f8f9fa;
+        border-top: none;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .edit-btn {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: #fff;
+    }
+
+    .delete-btn {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+    }
+
+    @media (max-width: 767.98px) {
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header h4 {
+            font-size: 16px;
+        }
+
+        .col-auto {
+            margin-top: 10px;
+        }
+    }
