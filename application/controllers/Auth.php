@@ -228,7 +228,7 @@ class Auth extends CI_Controller
             if ($query && $input_token) 
             {
                 $this->_sendEmail($otp_code, 'verify');
-                $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Selamat! Akun berhasil dibuat. Silahkan aktifkan akun anda menggunakan OTP yang sudah kami kirim ke email anda!</div>');
+                $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Periksa akun email anda untuk mendapatkan kode OTP yang sudah kami kirim!</div>');
                 redirect('auth/verify');
             } 
             else 
@@ -260,10 +260,88 @@ class Auth extends CI_Controller
 
         if ($type == 'verify') {
             $this->email->subject('Kode OTP Anda');
-            $this->email->message('Kode OTP Anda adalah: ' . $otp_code);
+            $this->email->message('<html>
+        <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f0f0;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #ffffff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            .header {
+                background-color: #007BFF;
+                color: #fff;
+                text-align: center;
+                padding: 10px;
+            }
+            .content {
+                padding: 20px;
+            }
+        </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Kode OTP Anda</h1>
+                </div>
+                <div class="content">
+                    <p>Kode OTP Anda adalah: <strong>' . $otp_code . '</strong></p>
+                </div>
+            </div>
+        </body>
+        </html>');
+
         } else if ($type == 'forgot') {
-            $this->email->subject('ASKK ME account password request recovery');
-            $this->email->message('Klik link ini untuk mereset password anda! : <a href="' . base_url() . 'auth/resetpassword?email=' . $this->input->post('email') . '&token=' . urlencode($token) . '">Recovery Password</a>');
+            $this->email->subject('ASKK ME lupa password akun');
+            $this->email->message('<html>
+        <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f0f0;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #ffffff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            .otp {
+                background-color: #007BFF;
+                color: #fff;
+                text-align: center;
+                padding: 10px;
+            }
+            .header {
+                padding: 20px;
+            }
+        </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Kode OTP Anda</h1>
+                </div>
+                <div class="content">
+                    <p>Kode OTP Anda adalah: <strong class="otp">' . $otp_code . '</strong></p>
+                </div>
+            </div>
+        </body>
+        </html>');
+
         }
 
         if ($this->email->send()) {
@@ -309,23 +387,23 @@ class Auth extends CI_Controller
                         $this->db->where('email', $data['email']);
                         $this->db->update('user');
                         $this->db->delete('user_token', ['email' => $data['email']]);
-                        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">' . $data['email'] . ' has been activated! Please login.</div>');
+                        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">' . $data['email'] . ' berhasil diaktivasi! Silahkan login.</div>');
                         redirect('auth');
                     } else  {
                         $this->db->delete('user', ['email' => $data['email']]);
                         $this->db->delete('user_token', ['email' => $data['email']]);
 
-                        $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Account activation failed! OTP expired.</div>');
+                        $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Aktivasi akun gagal! Kode OTP kadaluarsa.</div>');
                         redirect('auth/verify');
                     }
                 } else 
                 {
-                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Cant find/match the OTP code.</div>');
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Kode OTP tidak valid!.</div>');
                     redirect('auth/verify');
                 }
             } else 
             {
-                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Account activation failed! Wrong OTP.</div>');
+                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Aktivasi akun gagal! Kode OTP salah.</div>');
                 redirect('auth/verify');
             }
         }
@@ -343,20 +421,21 @@ class Auth extends CI_Controller
             $user = $this->db->get_where('user', ['email' => $email, 'is_active' => 1])->row_array();
 
             if ($user) {
-                $token = base64_encode(random_bytes(32));
+                // $token = base64_encode(random_bytes(32));
+                $otp_code = rand(1000, 9999);
                 $user_token = [
                     'email' => $email,
-                    'token' => $token,
+                    'token' => $otp_code,
                     'date_created' => time()
                 ];
 
                 $this->db->insert('user_token', $user_token);
-                $this->_sendEmail($token, 'forgot');
-
-                $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Please check your email to reset your password!</div>');
-                redirect('auth/forgotpassword');
+                $this->_sendEmail($otp_code, 'forgot');
+                $this->session->set_userdata('reset_session', $user_token);
+                $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Periksa email anda untuk melakukan ubah password!</div>');
+                redirect('auth/resetpassword');
             } else {
-                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Email is not registered or activated!</div>');
+                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Email tidak daftar atau belum teraktivasi!</div>');
                 redirect('auth/forgotpassword');
             }
         }
@@ -365,24 +444,41 @@ class Auth extends CI_Controller
 
     public function resetPassword()
     {
-        $email = $this->input->get('email');
-        $token = $this->input->get('token');
+        $this->form_validation->set_rules('otp_1', 'OTP', 'required|trim');
+        $this->form_validation->set_rules('otp_2', 'OTP', 'required|trim');
+        $this->form_validation->set_rules('otp_3', 'OTP', 'required|trim');
+        $this->form_validation->set_rules('otp_4', 'OTP', 'required|trim');
 
-        $user = $this->db->get_where('user', ['email' => $email])->row_array();
+        if ($this->form_validation->run() == false) 
+        {
+            $data['title'] = 'OTP Verification';
+            $this->template->load('templates/otp', 'auth/otp-reset', $data);
+        } else 
+        {
+            $otp_1 = $this->input->post('otp_1');
+            $otp_2 = $this->input->post('otp_2');
+            $otp_3 = $this->input->post('otp_3');
+            $otp_4 = $this->input->post('otp_4');
 
-        if ($user) {
-            $user_token = $this->db->get_where('user_token', ['token' => $token])->row_array();
+            $entered_otp = $otp_1 . $otp_2 . $otp_3 . $otp_4;
+            $data = $this->session->userdata('reset_session');
 
-            if ($user_token) {
-                $this->session->set_userdata('reset_email', $email);
-                $this->changePassword();
+            $user = $this->db->get_where('user', ['email' => $data['email']])->row_array();
+
+            if ($user) {
+                $user_token = $this->db->get_where('user_token', ['token' => $entered_otp])->row_array();
+
+                if ($user_token) {
+                    $this->session->set_userdata('reset_email', $data['email']);
+                    $this->changePassword();
+                } else {
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Reset password gagal! Kode OTP salah.</div>');
+                    redirect('auth');
+                }
             } else {
-                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Reset password failed! Wrong token.</div>');
+                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Reset password gagal! Email salah.</div>');
                 redirect('auth');
             }
-        } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Reset password failed! Wrong email.</div>');
-            redirect('auth');
         }
     }
     
@@ -410,7 +506,7 @@ class Auth extends CI_Controller
 
             $this->db->delete('user_token', ['email' => $email]);
 
-            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Password has been changed! Please login.</div>');
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Password berhasil diubah! Silahkan login.</div>');
             redirect('auth');
         }
     }
