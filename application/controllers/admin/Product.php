@@ -265,5 +265,19 @@ class Product extends CI_Controller
             echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus produk!']);
         }
     }
-
+    
+    public function delete_selected() {
+        $ids_to_delete = $this->input->post('delete_ids');
+    
+        if (!empty($ids_to_delete)) {
+            $this->product->delete_products($ids_to_delete);
+            $this->session->set_flashdata('message', 'Data berhasil dihapus.');
+            redirect('admin/product');
+        } else {
+            // Tidak ada item yang dipilih, tampilkan pesan kesalahan atau redirect sesuai kebutuhan
+            $this->session->set_flashdata('message', 'Tidak ada data yang dipilih untuk dihapus.');
+            redirect('admin/product');
+        }
+    }
+    
 }

@@ -78,6 +78,19 @@
 
  <script>
 $(document).ready(function() {
+    $("#check-all").click(function() {
+        if ($(this).is(":checked"))
+            $(".check-item").prop("checked",
+                true);
+        else
+            $(".check-item").prop("checked",
+                false);
+    });
+});
+ </script>
+
+ <script>
+$(document).ready(function() {
     var provinsiWrapper = $('#provinsiWrapper');
     var kotaWrapper = $('#kotaWrapper');
     var kecamatanWrapper = $('#kecamatanWrapper');

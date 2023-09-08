@@ -58,4 +58,11 @@ class Product_model extends CI_Model
         $this->db->delete('products');
         return $this->db->affected_rows();
     }
+
+    public function delete_products($ids_to_delete)
+    {
+        $this->db->where_in('id', $ids_to_delete);
+        $this->db->delete('products');
+        return $this->db->affected_rows();
+    }
 }
