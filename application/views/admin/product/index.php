@@ -15,76 +15,75 @@
             </div>
 
             <!-- Card Body -->
-            <form action="<?= base_url('admin/product/delete_selected') ?>" method="post">
-                <div class="card-body">
-                    <div class="clearfix mb-3">
-                        <div class="float-right">
-                            <!-- Search Form -->
-                            <form id="searchForm" class="form-inline">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" id="searchInput" placeholder="Search...">
-                                </div>
-                                <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
-                            </form>
-                        </div>
-                        <div class="float-left">
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
-                                Add Product
-                            </button>
-                            <!-- <button class="tes">Title, Text and Icon</button> -->
-                        </div>
-                        <div class="float-left ml-2">
-                            <a href="<?= base_url('admin/product/pdf') ?>" class="btn btn-success">Export PDF</a>
-                        </div>
-                        <div class="float-left ml-2">
-                            <button type="submit" class="btn btn-danger">Hapus Data</button>
-                        </div>
-
+            <?= form_open('admin/product/delete_selected', ['class' => 'formHapus']); ?>
+            <div class="card-body">
+                <div class="clearfix mb-3">
+                    <div class="float-right">
+                        <!-- Search Form -->
+                        <form id="searchForm" class="form-inline">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+                            </div>
+                            <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
+                        </form>
+                    </div>
+                    <div class="float-left">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
+                            Add Product
+                        </button>
+                        <!-- <button class="tes">Title, Text and Icon</button> -->
+                    </div>
+                    <div class="float-left ml-2">
+                        <a href="<?= base_url('admin/product/pdf') ?>" class="btn btn-success">Export PDF</a>
+                    </div>
+                    <div class="float-left ml-2">
+                        <button type="submit" class="btn btn-danger tombolHapusBanyak">Hapus Data</button>
                     </div>
 
-                    <!-- Responsive Table -->
-                    <div class="table-responsive text-center mx-auto">
-                        <table class="table table-bordered table-striped">
-                            <!-- Table Header -->
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th><input type="checkbox" id="check-all"></th>
-                                    <th>No</th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Price</th>
-                                    <th>Image</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-
-                            <!-- Table Body -->
-                            <tbody>
-                                <?php foreach ($products as $index => $product): ?>
-                                <tr>
-                                    <td><input type='checkbox' class='check-item' name="delete_ids[]"
-                                            value="<?= $product['id']; ?>"></td>
-                                    <td><?= $no++ ?></td>
-                                    <td><?= $product['name']; ?></td>
-                                    <td><?= $product['description'] ?></td>
-                                    <td><?= $product['price'] ?></td>
-                                    <td> <img src="<?= base_url('upload/') . $product['image'] ?>" width="250"
-                                            height="200">
-                                    </td>
-                                    <td class="text-center">
-                                        <button type="button" class="btn btn-primary edit-btn"
-                                            data-id="<?= $product['id'] ?>" data-toggle="modal"
-                                            data-target="#editModal">Edit</button>
-                                        <button type="button" class="btn btn-danger delete-btn"
-                                            data-id="<?= $product['id'] ?>">Delete</button>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
-            </form>
+
+                <!-- Responsive Table -->
+                <div class="table-responsive text-center mx-auto">
+                    <table class="table table-bordered table-striped">
+                        <!-- Table Header -->
+                        <thead class="thead-dark">
+                            <tr>
+                                <th><input type="checkbox" id="check-all"></th>
+                                <th>No</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <!-- Table Body -->
+                        <tbody>
+                            <?php foreach ($products as $index => $product): ?>
+                            <tr>
+                                <td><input type='checkbox' class='check-item' name="delete_ids[]"
+                                        value="<?= $product['id']; ?>"></td>
+                                <td><?= $no++ ?></td>
+                                <td><?= $product['name']; ?></td>
+                                <td><?= $product['description'] ?></td>
+                                <td><?= $product['price'] ?></td>
+                                <td> <img src="<?= base_url('upload/') . $product['image'] ?>" width="250" height="200">
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-primary edit-btn"
+                                        data-id="<?= $product['id'] ?>" data-toggle="modal"
+                                        data-target="#editModal">Edit</button>
+                                    <button type="button" class="btn btn-danger delete-btn"
+                                        data-id="<?= $product['id'] ?>">Delete</button>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <?= form_close(); ?>
 
             <!-- Card Footer -->
             <div class="card-footer clearfix">
