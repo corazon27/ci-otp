@@ -59,12 +59,10 @@ class Product_model extends CI_Model
         return $this->db->affected_rows();
     }
 
-    public function delete_products($id, $jmlData)
+    public function delete_products($ids_to_delete)
     {
-       for($i=0; $i < $jmlData; $i++){
-        $this->db->delete('products', ['id' => $id[$i]]);
-       }
-
-       return true;
+        $this->db->where_in('id', $ids_to_delete);
+        $this->db->delete('products');
+        return $this->db->affected_rows();
     }
 }

@@ -266,28 +266,18 @@ class Product extends CI_Controller
         }
     }
     
-    //controller
     public function delete_selected() {
-        if ($this->input->is_ajax_request() == true) {
-            $id = $this->input->post('delete_ids', true);
-            $jmlData = count($id);
-            $hapusData = $this->product->delete_products($id, $jmlData);
-
-            if ($hapusData == true) {
-                $msg = [
-                    'sukses' => "$jmlData data product berhasil terhapus"
-                ];
-            } else {
-                $msg = [
-                    'error' => 'Gagal menghapus data!'
-                ];
-            }
-            echo json_encode($msg);
+        $ids_to_delete = $this->input->post('delete_ids');
+    
+        if (!empty($ids_to_delete)) {
+            $this->product->delete_products($ids_to_delete);
+            $this->session->set_flashdata('message', 'Data berhasil dihapus.');
+            redirect('admin/product');
         } else {
-            echo "Maaf tidak dapat melanjutkan proses";
-            exit;
+            // Tidak ada item yang dipilih, tampilkan pesan kesalahan atau redirect sesuai kebutuhan
+            $this->session->set_flashdata('message', 'Tidak ada data yang dipilih untuk dihapus.');
+            redirect('admin/product');
         }
     }
-
     
 }
