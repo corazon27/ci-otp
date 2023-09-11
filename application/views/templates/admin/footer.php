@@ -90,6 +90,66 @@ $(document).ready(function() {
  </script>
 
  <script>
+$('.formHapus').submit(function(e) {
+    e.preventDefault();
+
+    let jmlData = $('.check-item:checked');
+    if (jmlData.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Perhatian!',
+            text: 'Maaf tidak ada data yang bisa dihapus, silahkan pilih data yang ingin dihapus terlebih dahulu!'
+        });
+    } else {
+        Swal.fire({
+            title: 'Hapus Data',
+            text: `Ada ${jmlData.length} data produk yang akan dihapus, anda yakin?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus data!',
+            cancelButtonText: 'Tidak!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    dataType: "JSON",
+                    success: function(response) {
+                        if (response.sukses) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                html: response.sukses
+                            }).then(function() {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                html: response.error
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            html: 'Gagal menghubungi server!'
+                        });
+                    }
+                });
+            }
+        });
+    }
+    return false;
+});
+ </script>
+
+ <script>
 $(document).ready(function() {
     var provinsiWrapper = $('#provinsiWrapper');
     var kotaWrapper = $('#kotaWrapper');
