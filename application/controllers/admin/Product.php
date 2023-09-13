@@ -82,6 +82,7 @@ class Product extends CI_Controller
     }
 
 
+
     // Custom validation callback for image field
     public function validate_image()
     {

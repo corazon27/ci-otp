@@ -15,11 +15,29 @@ class Product_model extends CI_Model
     }
 
     public function get_total_data($id_user)
-	{
-	    $this->db->from('products');
-	    $this->db->where('id_user', $id_user);
-	    return $this->db->count_all_results();
-	}
+    {
+        $key = "product_page_" . $id_user;
+    
+        // Coba mendapatkan data dari cache
+        $cachedData = $this->InstanceCache->getItem($key);
+        
+        if (!$cachedData->isHit()) {
+            // Jika data tidak ada di cache, lakukan query ke database
+            $query = $this->db->from('products')
+                ->where('id_user', $id_user)
+                ->count_all_results();
+    
+            // Simpan hasil query ke dalam cache
+            $cachedData->set($query)->expiresAfter(300);
+            $this->InstanceCache->save($cachedData);
+    
+            return $query;
+        } else {
+            // Jika data ada di cache, kembalikan data dari cache
+            return $cachedData->get();
+        }
+    }
+    
 
     public function get_data_pdf($id_user)
     {
@@ -33,29 +51,17 @@ class Product_model extends CI_Model
         }
     }
     
+    //models
     public function get_all_data_product($params)
     {
-        $key = "product_page_" . $params[0];
-
-        $CachedString = $this->InstanceCache->getItem($key);
-
-        if (!$CachedString->isHit()) {
-            $sql = "SELECT a.*, b.id_user 
-                    FROM products a
-                    INNER JOIN user b ON a.id_user = b.id_user
-                    WHERE b.id_user = ?
-                    ORDER BY a.created_at DESC
-                    LIMIT ?, ?";
-            $query = $this->db->query($sql, $params)->result_array();
-
-            // Simpan hasil query ke dalam cache
-            $CachedString->set($query)->expiresAfter(300);
-            $this->InstanceCache->save($CachedString);
-
-            return $query;
-        } else {
-            return $CachedString->get();
-        }
+        $sql = "SELECT a.*, b.id_user 
+                FROM products a
+                INNER JOIN user b ON a.id_user = b.id_user
+                WHERE b.id_user = ?
+                ORDER BY a.created_at DESC
+                LIMIT ?, ?"; // Hapus tanda kutip di sekitar '?' yang ada dalam LIMIT
+        $query = $this->db->query($sql, $params)->result_array();
+        return $query;
     }
 
 
