@@ -34,6 +34,13 @@
         </a>
     </li>
 
+    <li class="nav-item <?= $title == 'People' ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('admin/people'); ?>">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>New Pagination</span>
+        </a>
+    </li>
+
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
