@@ -1,10 +1,17 @@
 <?php
+use Phpfastcache\CacheManager;
+use Phpfastcache\Config\ConfigurationOption;
 class Product_model extends CI_Model
 {
     public function __construct()
     {
         parent::__construct();
-        $this->load->library('phpfastcache_library');
+        CacheManager::setDefaultConfig(new ConfigurationOption([
+            'path' => APPPATH.'/cache', // or in windows "C:/tmp/"
+        ]));
+        
+        // In your class, function, you can call the Cache
+        $this->InstanceCache = CacheManager::getInstance('files');
     }
 
     public function get_total_data($id_user)
@@ -26,39 +33,32 @@ class Product_model extends CI_Model
         }
     }
     
-    public function get_cached_data($cache_key, $callback)
-    {
-        $cached_data = $this->phpfastcache_library->get($cache_key);
-
-        if ($cached_data === null) {
-            // Data tidak ada di cache, panggil callback untuk mengambil data
-            $data = $callback();
-            
-
-            // Simpan data ke dalam cache
-            $this->phpfastcache_library->set($cache_key, $data, 3600); // Cache berlaku selama 1 jam
-        } else {
-            // Data ada di cache, gunakan data tersebut
-            $data = $cached_data;
-        }
-
-        return $data;
-    }
-
     public function get_all_data_product($params)
     {
-        $cache_key = 'all_data_product_' . md5(serialize($params));
+        $key = "product_page_" . $params[0];
 
-        return $this->get_cached_data($cache_key, function () use ($params) {
+        $CachedString = $this->InstanceCache->getItem($key);
+
+        if (!$CachedString->isHit()) {
             $sql = "SELECT a.*, b.id_user 
                     FROM products a
                     INNER JOIN user b ON a.id_user = b.id_user
                     WHERE b.id_user = ?
                     ORDER BY a.created_at DESC
                     LIMIT ?, ?";
-            return $this->db->query($sql, $params)->result_array();
-        });
+            $query = $this->db->query($sql, $params)->result_array();
+
+            // Simpan hasil query ke dalam cache
+            $CachedString->set($query)->expiresAfter(300);
+            $this->InstanceCache->save($CachedString);
+
+            return $query;
+        } else {
+            return $CachedString->get();
+        }
     }
+
+
 
     public function get_product_by_id($id)
     {
