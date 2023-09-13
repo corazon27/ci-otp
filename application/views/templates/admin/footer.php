@@ -157,9 +157,9 @@ $(document).ready(function() {
     var idProvinsi = $('#id_provinsi');
     var idKota = $('#id_kota');
     var idKecamatan = $('#id_kecamatan');
-    const curentProvince = <?= $user['id_provinsi'] ?>;
-    const curentCity = <?= $user['id_kota'] ?>;
-    const curentDistrict = <?= $user['id_kecamatan'] ?>;
+    const curentProvince = <?= isset($user['id_provinsi']) ? $user['id_provinsi'] : '' ?>;
+    const curentCity = <?= isset($user['id_kota']) ? $user['id_kota'] : '' ?>;
+    const curentDistrict = <?= isset($user['id_kecamatan']) ? $user['id_kecamatan'] : '' ?>;
 
     idProvinsi.change(function() {
         var selectedProvinsi = $(this).val();
