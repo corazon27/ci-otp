@@ -17,30 +17,40 @@
             <!-- Card Body -->
             <?= form_open('admin/product/delete_selected', ['class' => 'formHapus']); ?>
             <div class="card-body">
-                <div class="clearfix mb-3">
+                <div class="clearfix">
                     <div class="float-right">
                         <!-- Search Form -->
                         <form id="searchForm" class="form-inline">
                             <div class="form-group">
                                 <input type="text" class="form-control" id="searchInput" placeholder="Search...">
                             </div>
-                            <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
+                            <button type="button" class="btn btn-primary" id="searchBtn">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
                         </form>
                     </div>
                     <div class="float-left">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
-                            Add Product
+                            <i class="fa-solid fa-plus"></i>
                         </button>
-                        <!-- <button class="tes">Title, Text and Icon</button> -->
+                        <a href="<?= base_url('admin/product/pdf') ?>" class="btn btn-success"><i
+                                class="fa-solid fa-download"></i></a>
+                        <button type="submit" class="btn btn-danger tombolHapusBanyak"><i
+                                class="fa-solid fa-trash"></i></button>
                     </div>
-                    <div class="float-left ml-2">
-                        <a href="<?= base_url('admin/product/pdf') ?>" class="btn btn-success">Export PDF</a>
-                    </div>
-                    <div class="float-left ml-2">
-                        <button type="submit" class="btn btn-danger tombolHapusBanyak">Hapus Data</button>
-                    </div>
-
                 </div>
+                <div class="mb-2">
+                    <!-- Tambahkan mb-2 untuk memberi ruang -->
+                    <label>Show:</label>
+                    <select id="pagination-select">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+
+
 
                 <!-- Responsive Table -->
                 <div class="table-responsive text-center mx-auto">
@@ -81,3 +91,14 @@
         </div>
     </div>
 </div>
+
+<script>
+const selectElement = document.getElementById('pagination-select');
+selectElement.addEventListener('change', function() {
+    const selectedValue = selectElement.value;
+    // Ganti 'nama_controller' dengan nama controller Anda
+    const baseUrl = "<?php echo site_url('admin/people/index'); ?>";
+    const newUrl = `${baseUrl}?per_page=${selectedValue}`;
+    window.location.href = newUrl;
+});
+</script>

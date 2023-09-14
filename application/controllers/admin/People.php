@@ -25,10 +25,11 @@ class People extends CI_Controller
         // Load Library
         $this->load->library('pagination');
 
+        $perPage = $this->input->get('per_page') ?? 10; 
         // Config
         $config['base_url'] = site_url('/admin/people/index');
         $config['total_rows'] = $this->peoples->countAllPeoples($data_user['user']);
-        $config['per_page'] = 5;
+        $config['per_page'] = $perPage;
         $config['num_links'] = 4;
 
         // Styling Pagination

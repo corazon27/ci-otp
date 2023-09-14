@@ -24,20 +24,19 @@
                             <div class="form-group">
                                 <input type="text" class="form-control" id="searchInput" placeholder="Search...">
                             </div>
-                            <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
+                            <button type="button" class="btn btn-primary" id="searchBtn">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
                         </form>
                     </div>
                     <div class="float-left">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
-                            Add Product
+                            <i class="fa-solid fa-plus"></i>
                         </button>
-                        <!-- <button class="tes">Title, Text and Icon</button> -->
-                    </div>
-                    <div class="float-left ml-2">
-                        <a href="<?= base_url('admin/product/pdf') ?>" class="btn btn-success">Export PDF</a>
-                    </div>
-                    <div class="float-left ml-2">
-                        <button type="submit" class="btn btn-danger tombolHapusBanyak">Hapus Data</button>
+                        <a href="<?= base_url('admin/product/pdf') ?>" class="btn btn-success"><i
+                                class="fa-solid fa-download"></i></a>
+                        <button type="submit" class="btn btn-danger tombolHapusBanyak"><i
+                                class="fa-solid fa-trash"></i></button>
                     </div>
 
                 </div>
@@ -238,24 +237,13 @@ table td {
     height: auto;
 }
 
-@media screen and (max-width: 398px) {
-    .float-right {
-        margin-bottom: 15px;
-    }
-
-    #searchInput {
-        width: 100%;
-    }
-
-    .delete-btn {
-        margin-top: 10px;
-    }
 
 
-}
+/* tablet dan laptop */
+/* Contoh media query untuk tablet dalam mode potret */
+@media screen and (min-width: 768px) and (max-width: 991px) {
 
-@media screen and (max-width: 798px) {
-
+    /* Gaya CSS khusus untuk tablet mode potret */
     #imagePreview,
     #imageEditPreview {
         max-width: 50%;
@@ -300,5 +288,127 @@ table td {
         margin-right: 5px;
         margin: 0 auto;
     }
+}
+
+/* Contoh media query untuk tablet dalam mode lanskap */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+
+    /* Gaya CSS khusus untuk tablet mode lanskap */
+    #imagePreview,
+    #imageEditPreview {
+        max-width: 50%;
+        display: block;
+        margin: 0 auto;
+    }
+
+
+    .delete-btn {
+        margin-top: 10px;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    th,
+    td {
+        /* display: block; */
+        width: auto;
+        text-align: center;
+    }
+
+    th {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    tbody tr {
+        margin-bottom: 10px;
+    }
+
+    tbody td {
+        margin-bottom: 10px;
+        border: none;
+    }
+
+    tbody td::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: bold;
+        margin-right: 5px;
+        margin: 0 auto;
+    }
+}
+
+/* tablet dan laptop */
+
+
+
+/* smartphone */
+/* Contoh media query untuk smartphone mode potret */
+@media screen and (max-width: 575px) {
+    /* Gaya CSS khusus untuk smartphone mode potret */
+}
+
+/* Contoh media query untuk smartphone mode lanskap */
+@media screen and (min-width: 576px) and (max-width: 767px) {
+    /* Gaya CSS khusus untuk smartphone mode lanskap */
+}
+
+/* smartphone */
+
+
+
+
+
+
+
+@media screen and (max-width: 398px) {
+    .float-right {
+        margin-bottom: 15px;
+    }
+
+    #searchInput {
+        width: 100%;
+    }
+
+    .delete-btn {
+        margin-top: 10px;
+    }
+
+
+}
+
+/* smartphone */
+@media screen and (max-width: 398px) {
+    .float-right {
+        margin-bottom: 15px;
+    }
+
+    #searchInput {
+        width: 100%;
+    }
+
+    .delete-btn {
+        margin-top: 10px;
+    }
+
+
+}
+
+@media screen and (max-width: 398px) {
+    .float-right {
+        margin-bottom: 15px;
+    }
+
+    #searchInput {
+        width: 100%;
+    }
+
+    .delete-btn {
+        margin-top: 10px;
+    }
+
+
 }
 </style>
