@@ -64,7 +64,7 @@
                             <tr>
                                 <td><input type='checkbox' class='check-item' name="delete_ids[]"
                                         value="<?= $product['id']; ?>"></td>
-                                <td><?= $no++ ?></td>
+                                <td><?= ++$start ?></td>
                                 <td><?= $product['name']; ?></td>
                                 <td><?= $product['description'] ?></td>
                                 <td><?= $product['price'] ?></td>
@@ -86,11 +86,7 @@
             <?= form_close(); ?>
 
             <!-- Card Footer -->
-            <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 justify-content-end">
-                    <?= $this->pagination->create_links(); ?>
-                </ul>
-            </div>
+            <?= $this->pagination->create_links(); ?>
         </div>
     </div>
 </div>

@@ -54,14 +54,15 @@ class Product_model extends CI_Model
     //models
     public function get_all_data_product($params)
     {
-        $sql = "SELECT a.*, b.id_user 
-                FROM products a
-                INNER JOIN user b ON a.id_user = b.id_user
-                WHERE b.id_user = ?
-                ORDER BY a.created_at DESC
-                LIMIT ?, ?"; // Hapus tanda kutip di sekitar '?' yang ada dalam LIMIT
-        $query = $this->db->query($sql, $params)->result_array();
-        return $query;
+        $this->db->select('p.*, u.id_user');
+        $this->db->from('products p');
+        $this->db->join('user u', 'p.id_user = u.id_user', 'inner');
+        $this->db->where('u.id_user', $params['user_id']);
+        $this->db->order_by('p.created_at', 'DESC'); // Menambahkan sorting
+        $this->db->limit($params['limit'], $params['start']);
+
+        return $this->db->get()->result_array();
+
     }
 
 

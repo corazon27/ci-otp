@@ -15,6 +15,10 @@ class People extends CI_Controller
     
     public function index()
     {
+        $data_user = $this->session->userdata('login_session');
+        $data['data_user'] = $data_user;
+        $data['user'] = $this->login->userdata($data_user['user']);
+        
         $data['title'] = 'People';
         $data['page'] = 'Daftar People';
 
@@ -22,15 +26,15 @@ class People extends CI_Controller
         $this->load->library('pagination');
 
         // Config
-        $config['base_url'] = 'http://localhost/modifotp/admin/people/index';
-        $config['total_rows'] = $this->peoples->countAllPeoples();
+        $config['base_url'] = site_url('/admin/people/index');
+        $config['total_rows'] = $this->peoples->countAllPeoples($data_user['user']);
         $config['per_page'] = 5;
-        $config['num_links'] = 5;
+        $config['num_links'] = 4;
 
         // Styling Pagination
         $config['full_tag_open'] = '
         <nav>
-            <ul class="pagination justify-content-center mt-5">';
+            <ul class="pagination justify-content-center mt-3">';
 
         $config['full_tag_close'] = '
             </ul>
@@ -64,7 +68,14 @@ class People extends CI_Controller
         $this->pagination->initialize($config);
 
         $data['start'] = $this->uri->segment(4);
-        $data['peoples'] = $this->peoples->getPeoples($config['per_page'], $data['start']);
+        $limit = $config['per_page'];
+        $params = array(
+            'user_id' => $data_user['user'],
+            'limit' => $limit,
+            'start' => $data['start']
+        );
+        $data['peoples'] = $this->peoples->getPeoples($params);
+
         
         $this->load->view('templates/admin/header', $data);
         $this->load->view('templates/admin/sidebar');

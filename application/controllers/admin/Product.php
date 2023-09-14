@@ -51,28 +51,59 @@ class Product extends CI_Controller
 
         // Pagination start
         $this->load->library('pagination');
-        $config['base_url'] = site_url('/admin/product/');
-        $config['page_query_string'] = TRUE;
+        // Load Library
+        $this->load->library('pagination');
+
+        // Config
+        $config['base_url'] = site_url('/admin/product/index');
         $config['total_rows'] = $this->product->get_total_data($data_user['user']);
         $config['per_page'] = 5;
+        $config['num_links'] = 4;
 
-        $config['attributes'] = array('class' => 'page-link');
-        $config['num_tag_open'] = '<li class="page-item">';
-        $config['num_tag_close'] = '</li>';
+        // Styling Pagination
+        $config['full_tag_open'] = '
+        <nav>
+            <ul class="pagination justify-content-center mt-3">';
+
+        $config['full_tag_close'] = '
+            </ul>
+        </nav>';
+
+        $config['first_link'] = 'First';
+        $config['first_tag_open'] = '<li class="page-item">';
+        $config['first_tag_close'] = '</li>';
+        
+        $config['last_link'] = 'Last';
+        $config['last_tag_open'] = '<li class="page-item">';
+        $config['last_tag_close'] = '</li>';
+
+        $config['next_link'] = '&raquo';
+        $config['next_tag_open'] = '<li class="page-item">';
+        $config['next_tag_close'] = '</li>';
+
+        $config['prev_link'] = '&laquo';
+        $config['prev_tag_open'] = '<li class="page-item">';
+        $config['prev_tag_close'] = '</li>';
+
         $config['cur_tag_open'] = '<li class="page-item active"><a class="page-link" href="#">';
         $config['cur_tag_close'] = '</a></li>';
 
+        $config['num_tag_open'] = '<li class="page-item">';
+        $config['num_tag_close'] = '</li>';
+
+        $config['attributes'] = array('class' => 'page-link');
+
+        // Initialize
         $this->pagination->initialize($config);
+
+        $data['start'] = $this->uri->segment(4);
         $limit = $config['per_page'];
-        $offset = (int) html_escape($this->input->get('per_page'));
-
-        // Data product
-        $params = array($data_user['user'], $offset, $limit);
+        $params = array(
+            'user_id' => $data_user['user'],
+            'limit' => $limit,
+            'start' => $data['start']
+        );
         $data['products'] = $this->product->get_all_data_product($params);
-        // Pagination end
-
-        // Title
-        $data['no'] = $offset + 1;
 
         $this->load->view('templates/admin/header', $data);
         $this->load->view('templates/admin/sidebar');
